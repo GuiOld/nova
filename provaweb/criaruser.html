@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Usuário</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/leaflet.css" />
+</head>
+<body>
+
+    <div class="container">
+        <div id="resultado"></div>
+    <div class="card">
+        
+        <div class="topo">
+            <a href="../"><img src="img/voltar.png" class="btn-voltar"></a>
+        </div>
+        
+    <form id="userForm">
+        <div class="title">
+            <h1>Cadastrar Usuário:</h1>
+        </div>
+        <label for="Nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <label for="Email">Email:</label>
+        <input type="text" id="email" name="email" required>
+        <label for="nascido">Data de Nascimento:</label>
+        <input type="date" id="nascido" name="nascido" required>
+        <label for="Senha">Senha:</label>
+        <input type="text" id="senha" name="senha" required><br>
+        
+        <details><summary class="sum">Cadastrar Endereço:</summary>
+        <div class="completo">
+
+        <div class="ender">
+            <label>Cep:
+        <input name="cep" type="text" id="cep" value="" size="10" maxlength="9"
+               onblur="pesquisacep(this.value);" style="width: 95%;"/></label><br />
+               <label>Estado:
+                <input name="uf" type="text" id="uf" size="2" style="width: 100%;"/></label><br />
+                <label>IBGE:
+                <input name="ibge" type="text" id="ibge" size="8" style="width: 100%;"/></label><br />
+               <!-- <input type="text"  name="utmx" id="utmx" readonly> 
+               <input type="text"  name="utmy" id="utmy" readonly> 
+               <br> -->
+            </div>
+        <label>Rua:
+        <input name="rua" type="text" id="rua" size="60" style="width: 95%;"/></label><br />
+        <label>Bairro:
+        <input name="bairro" type="text" id="bairro" size="40" style="width: 95%;"/></label><br />
+        <label>Cidade:
+        <input name="cidade" type="text" id="cidade" size="40" style="width: 95%;"/></label><br />
+  
+
+        <div id="mapid"></div>
+
+        </div>
+        </details>
+        <div class="central">
+            <button type="button" id="submitButton">Criar Usuário</button>
+        </div>
+    </form>
+    </div>
+    
+    
+</div>
+<script src="js/createUser.js"></script>  <!-- Supondo que sua função esteja em script.js -->
+<script src="js/cep.js"></script> 
+<script src="js/leaflet.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+o que foi feito para a resolução da API mapa
+
+
+
+primeiramente utilizamos o pesquisacep para fazer a consulta no viaCep, ao retornar o JSON com o nome da rua, endereço, bairro, uf e estado, já chama a função meu_callback e encaminha atraves da variavel data os dados em Json.
+
+a função meu_callback é assícrona assim, os dados do pesquisa Cep só será retornada juntamente com o mapa. 
+
+se não existir erro no conteudo, cria a variavel address = conteudo logradouro mais a localidade, logo depois temos um try, onde realizamos a função fetch e passamos a variavel address para a URL
+
+ o resultado da requisição é passada para a variavel response, que se for diferente de OK ela lançara um erro, se for OK, o response é codificado em JSON e é passada para a variavel data,
+abaixo podemos notar que é extraída a altitude de data e é armazenado em Latjs, a mesma coisa é feita para extrair a longitude, Latjs e Lngjs é passados para a função createMap.
+
+
+com os valores em mãos atualizamos os campos dos formularios, caso dê algum erro é executado o catch.
+
+no createMap, temos o L.map, que é a criação do mapa que se associa com um elemento HTML (mapid) e nessa div é colocado um setView que recebe os valores de lat e lng com o zoom de 13
+
+ uma variavel mymap que recebe L.tileLayer (que é uma instancia de uma camada de mosaico, nele é passado uma URL que inclui placeholders s, z, x, y, que seriam as cordenadas de x e y, nivel de zoom z, e servidores de mosaico que hospedam openstreetmap s.
+
+abaixo damos os creditos atraves da attribution, um maxzoom de 18, adicionamos a camada de mosaico ao mapa mymap e adicionamos um marcador L.marker juntamente ao mapa.
+

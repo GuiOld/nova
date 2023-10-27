@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Gerenciamento de Produtos</title>
+</head>
+<body>
+
+    <div class="container">
+        <div id="resultado2"></div>
+    <div class="card3">
+        <div class="topo">
+            <a href="../"><img src="img/voltar.png" class="btn-voltar"></a>
+        </div>
+    <h1>Buscar Produto</h1>
+    <label for="getProdId">ID do Produto:</label>
+    <input type="number" id="getProdId">
+    <button onclick="getProd()" class="search">Buscar</button>
+
+    <h1 class="title2">Gerenciar Produtos</h1>
+    <label for="inputNome">Nome:</label>
+    <input type="text" id="inputNome">
+    <label for="inputPreco">Preço:</label>
+    <input type="text" id="inputPreco">
+    <label for="inputQtd">Quantidade:</label>
+    <input type="text" id="inputQtd">
+    <div class="btns">
+        <button onclick="updateProd()">Atualizar</button>
+        <button onclick="deleteProd()">Excluir</button>
+    </div>
+</div>
+</div>
+<script src="js/getProd.js"></script>
+<script src="js/updateProd.js"></script>
+<script src="js/deleteProd.js"></script>
+</body>
+</html>
