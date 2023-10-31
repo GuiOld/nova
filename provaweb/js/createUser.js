@@ -82,12 +82,12 @@ function createUser() {
     .catch(error => alert('Erro na requisição: ' + error));
 }
 
-var requestOptions = {
-    method: 'GET',
-    redirect: 'follow'
-  };
+// var requestOptions = {
+//     method: 'GET',
+//     redirect: 'follow'
+//   };
   
-  fetch("https://dadosabertos.camara.leg.br/api/v2/deputados?nome=tiririca&ordem=ASC&ordenarPor=nome", requestOptions)
-    .then(response => response.json())
-    .then(result => console.log(result))
-    .catch(error => console.log('error', error));
+//   fetch("https://dadosabertos.camara.leg.br/api/v2/deputados?nome=tiririca&ordem=ASC&ordenarPor=nome", requestOptions)
+//     .then(response => response.json())
+//     .then(result => console.log(result))
+//     .catch(error => console.log('error', error));

@@ -13,7 +13,7 @@ class Pessoa {
 
     public function __construct() {
         $this->conn = new Model();
-        $this->conn->createTableFromModel($this);
+        // $this->conn->createTableFromModel($this);
     }
 
     /**

@@ -7,20 +7,27 @@ use App\Model\Usuario;
 use App\Model\Endereco;
 use App\Controller\EnderecoController;
 
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Exception;
+use App\Cryptonita\Crypto;
 class UserController {
 
     private $db;
     private $usuarios;
     private $enderecos;
     private $controllerenderecos;
+    private $cripto;
 
     public function __construct() {
         $this->db = new Model();
         $this->usuarios = new Usuario();
         $this->enderecos = new Endereco();
+        $this->cripto=new Crypto();
         // $this->db->excluirTabelaEndereco();
         // $this->db->criarTabelaEndereco();
     }
+
     public function select(){
         $user = $this->db->select('users');
         

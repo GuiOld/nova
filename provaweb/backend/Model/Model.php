@@ -3,13 +3,15 @@ namespace App\Model;
 use Exception;
 use PDO;
 use PDOException;
+use App\Cryptonita\Crypto;
+use ReflectionProperty;
  class Model {
- private $host = "localhost";
- private $db_name = "test_drive";
- private $username = "root";
- private $password = "root";
- private $conn;
- private $db_type = "mysql"; // Opções: "mysql", "pgsql", "sqlite", "mssql"
+//  private $host = "localhost";
+//  private $db_name = "test_drive";
+//  private $username = "root";
+//  private $password = "root";
+//  private $conn;
+//  private $db_type = "mysql"; // Opções: "mysql", "pgsql", "sqlite", "mssql"
 /*Dependendo do tipo de banco de dados escolhido, você pode precisar ajustar os parâmetros de conexão ($host, $db_name, $username e $password) da seguinte forma:
 
           MySQL:
@@ -37,13 +39,31 @@ use PDOException;
           $username: Nome de usuário para acessar o banco de dados SQL Server
           $password: Senha para acessar o banco de dados SQL Server
           */
-
+          private $host;
+    private $db_name;
+    private $username;
+    private $password;
+    protected $conn;
+    private $db_type;
+    private $chavetoken;
+    private $cripto;
+    private $is_connected = false;
  public function __construct() {
-     $this->connect();
+    $configFilePath = __DIR__ . '/config.php';
+    $config = require $configFilePath;
+    $this->host = DB_HOST;
+    $this->db_name = DB_NAME;
+    $this->username = DB_USER;
+    $this->password = DB_PASSWORD;
+    $this->db_type = DB_TYPE;
+    $this->chavetoken = TOKEN;
+    $this->cripto=new Crypto();
+    
+    $this->connect();
  }
 
  private function connect() {
-  $this->conn = null;
+//   $this->conn = null;
 
   try {
     switch ($this->db_type) {
@@ -95,25 +115,25 @@ public function insert($table, $data) {
         return $stmt->execute();
 }
 
-public function criarTabelaEndereco(){
-    $sql = "
-    CREATE TABLE IF NOT EXISTS endereco( 
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        cep TEXT NOT NULL,
-        rua TEXT NOT NULL,
-        bairro TEXT NOT NULL,
-        cidade TEXT NOT NULL,
-        uf TEXT NOT NULL,
-        iduser INTEGER,
-        FOREIGN KEY (iduser) REFERENCES users(id) 
-    )";
-    $this->conn->exec($sql);
-}
+// public function criarTabelaEndereco(){
+//     $sql = "
+//     CREATE TABLE IF NOT EXISTS endereco( 
+//         id INTEGER PRIMARY KEY AUTOINCREMENT,
+//         cep TEXT NOT NULL,
+//         rua TEXT NOT NULL,
+//         bairro TEXT NOT NULL,
+//         cidade TEXT NOT NULL,
+//         uf TEXT NOT NULL,
+//         iduser INTEGER,
+//         FOREIGN KEY (iduser) REFERENCES users(id) 
+//     )";
+//     $this->conn->exec($sql);
+// }
 
-public function excluirTabelaEndereco(){
-    $sql = "DROP TABLE endereco";
-    $this->conn->exec($sql);
-}
+// public function excluirTabelaEndereco(){
+//     $sql = "DROP TABLE endereco";
+//     $this->conn->exec($sql);
+// }
 
 public function select($table, $conditions = []) {
         $query = "SELECT * FROM $table";
@@ -165,5 +185,9 @@ public function delete($table, $conditions) {
         $query = "DELETE FROM $table WHERE $condition";
         $stmt = $this->conn->prepare($query);
         return $stmt->execute();
+    }
+
+    public function isConnected() {
+        return $this->is_connected;
     }
 }
