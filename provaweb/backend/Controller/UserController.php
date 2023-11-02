@@ -80,4 +80,41 @@ class UserController {
         return false;
         
     }
+
+    public function login($senha,$lembrar) {
+        $condicoes = ['email' => $this->usuarios->getEmail()];
+        $resultado = $this->select($this->usuarios, $condicoes);
+        $checado=$lembrar? 60*12 : 3;
+        if (!$resultado) {
+            return ['status' => false, 'message' => 'Usuário não encontrado.'];
+        }
+        if (!password_verify($senha, $this->cripto->show($resultado[0]['senha']))) {
+            return ['status' => false, 'message' => 'Senha incorreta.'];
+        }
+        $key = TOKEN;
+        $algoritimo='HS256';
+            $payload = [
+                "iss" => "localhost",
+                "aud" => "localhost",
+                "iat" => time(),
+                "exp" => time() + (60 * $checado),  
+                "sub" => $this->usuarios->getEmail()
+            ];
+            
+            $jwt = JWT::encode($payload, $key,$algoritimo);
+           
+        return ['status' => true, 'message' => 'Login bem-sucedido!','token'=>$jwt];
+    }
+
+    public function validarToken($token){
+        
+        $key = TOKEN;
+        $algoritimo = 'HS256';
+        try {
+            $decoded = JWT::decode($token, new Key($key, $algoritimo));
+            return ['status' => true, 'message' => 'Token válido!', 'data' => $decoded];
+        } catch(Exception $e) {
+            return ['status' => false, 'message' => 'Token inválido! Motivo: ' . $e->getMessage()];
+        }
+    }
 }

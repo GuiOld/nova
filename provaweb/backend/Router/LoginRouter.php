@@ -3,7 +3,8 @@
 namespace App\Router;
 require "../../vendor/autoload.php";
 
-use App\Controller\LoginController;
+// use App\Controller\LoginController;
+use App\Controller\UserController;
 use App\Model\Usuario;
 
 $usuario = new Usuario();
@@ -17,11 +18,12 @@ header('Cache-Control: no-cache, no-store, must-revalidate');
 $body = json_decode(file_get_contents('php://input'), true);
 switch($_SERVER["REQUEST_METHOD"]){
     case "POST":
+        var_dump($body);exit;
         if (isset($body['email'])) {
             $usuario->setEmail($body['email']);
             $senha=$body['senha'];
-            $lembrar=$body['lembrar'];
-            $usuariosController = new LoginController($usuario);
+            // $lembrar=$body['lembrar'];
+            $usuariosController = new UserController($usuario);
             $resultado = $usuariosController->login($senha,$lembrar);
             if(!$resultado['status']){
                 echo json_encode(['status' => $resultado['status'], 'message' => $resultado['message']]);
@@ -33,7 +35,7 @@ switch($_SERVER["REQUEST_METHOD"]){
         case "GET":
             $headers = getallheaders();
             $token = $headers['Authorization'] ?? null;
-            $usuariosController = new LoginController($usuario);
+            $usuariosController = new UserController($usuario);
             $validationResponse = $usuariosController->validarToken($token);
             if ($token === null || !$validationResponse['status']) {
                 echo json_encode(['status' => false, 'message' => $validationResponse['message']]);
