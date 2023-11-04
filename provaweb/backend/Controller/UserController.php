@@ -81,24 +81,24 @@ class UserController {
         
     }
 
-    public function login($senha,$lembrar) {
-        $condicoes = ['email' => $this->usuarios->getEmail()];
-        $resultado = $this->select($this->usuarios, $condicoes);
+    public function login($senha,$lembrar,$email) {
+        
+        $resultado = $this->db->select('users', ['email' => $email]);
         $checado=$lembrar? 60*12 : 3;
         if (!$resultado) {
             return ['status' => false, 'message' => 'Usuário não encontrado.'];
         }
-        if (!password_verify($senha, $this->cripto->show($resultado[0]['senha']))) {
+        if (!password_verify($senha, $resultado[0]['senha'])) {
             return ['status' => false, 'message' => 'Senha incorreta.'];
         }
-        $key = TOKEN;
+        $key = "123";
         $algoritimo='HS256';
             $payload = [
                 "iss" => "localhost",
                 "aud" => "localhost",
                 "iat" => time(),
                 "exp" => time() + (60 * $checado),  
-                "sub" => $this->usuarios->getEmail()
+                "sub" => $email
             ];
             
             $jwt = JWT::encode($payload, $key,$algoritimo);

@@ -16,20 +16,24 @@ header('Access-Control-Allow-Headers: Content-Type');
 header('Cache-Control: no-cache, no-store, must-revalidate');
 
 $body = json_decode(file_get_contents('php://input'), true);
+
 switch($_SERVER["REQUEST_METHOD"]){
     case "POST":
-        var_dump($body);exit;
+      
         if (isset($body['email'])) {
-            $usuario->setEmail($body['email']);
+            $email = $body ['email'];
+            
             $senha=$body['senha'];
             // $lembrar=$body['lembrar'];
-            $usuariosController = new UserController($usuario);
-            $resultado = $usuariosController->login($senha,$lembrar);
+            $usuariosController = new UserController();
+            $resultado = $usuariosController->login($senha,$lembrar, $email);
+
             if(!$resultado['status']){
                 echo json_encode(['status' => $resultado['status'], 'message' => $resultado['message']]);
                exit;
             }
-            echo json_encode(['status' => $resultado['status'], 'message' => $resultado['message'],'token'=>$resultado['token']]);
+            
+            echo json_encode(['status' => $resultado['status'], 'message' => $resultado['message'], 'token'=>$resultado['token']]);
         }
         break;
         case "GET":
