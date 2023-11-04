@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   async function validaToken() {
     try {
-        const response = await fetch('backend/Router/LoginRouter.php', {
+        const response = await fetch('../backend/Router/LoginRouter.php', {
             method: 'GET',
             headers: {
                 'Authorization':  token

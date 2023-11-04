@@ -380,7 +380,7 @@ label{
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    margin-top:2vw;
+    margin-top:1vw;
     /* background: rgba(255, 255, 255, 0.2); */
     background: rgba(81, 7, 201, 0.178);
     border-radius: 16px;
@@ -390,11 +390,8 @@ label{
     -webkit-backdrop-filter: blur(0.5vw);
     /* border: 0.1vw solid rgba(255, 255, 255, 0.3); */
     border: 0.1vw solid rgba(245, 245, 245, 0.87);
-    width: 55vw;
-    height: 48vw;
-    max-height: 42vw;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    width: 54vw;
+    height: 50vw;
 }
 
 .card2::-webkit-scrollbar{
@@ -602,6 +599,57 @@ details{
 .tione{
   font-weight: 600;
   font-size: 2vw;
+}
+
+#loginForm{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+    box-shadow: 0 0.4vw 1.5vw rgba(83, 9, 255, 0.63);
+    backdrop-filter: blur(0.5vw);
+    -webkit-backdrop-filter: blur(0.5vw);
+    border: 0.1vw solid rgba(245, 245, 245, 0.87);
+
+}
+
+.sec2{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5vw;
+  width: 25vw;
+  border-top: 0.1vw solid rgba(245, 245, 245, 0.87);
+}
+
+.sec2 > p{
+  margin-top: 2vw;
+  font-weight: 600;
+}
+
+.btn-cadastrar{
+  display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(50,7,115,1);
+    color: white;
+    height: 2.8vw;
+    width: 10vw;
+    align-items: center;
+    text-align: center;
+    border-radius: 1vw;
+    border: solid .2vw #9d75f1;
+    transition: all 0.5s;
+    font-weight: 600;
+    font-size: 1vw;
+    box-shadow: 0px 0px 28px -10px #9d75f1;
+    margin-top: 2vw;
+    align-items: center;
+}
+
+.btn-cadastrar:hover{
+  cursor: pointer;
+  background-color: #9c75f1c9;
 }
 
 @media screen and (min-width:300px) and (max-width:800px){
