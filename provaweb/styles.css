@@ -610,7 +610,7 @@ details{
     backdrop-filter: blur(0.5vw);
     -webkit-backdrop-filter: blur(0.5vw);
     border: 0.1vw solid rgba(245, 245, 245, 0.87);
-
+  margin-top: 1vw;
 }
 
 .sec2{

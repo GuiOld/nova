@@ -28,7 +28,7 @@
     </div>
     <script>
         window.onload = function() {
-            fetch('/backend/token')
+            fetch('/backend/token.js')
                 .then(response => response.json())
                 .then(data => localStorage.setItem('token', data.token));
         }

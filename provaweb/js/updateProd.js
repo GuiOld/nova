@@ -45,3 +45,6 @@ function updateProd() {
     })
     .catch(error => alert('Erro na requisição: ' + error));
 }
+setTimeout(function() {
+    $('#resultado').css('visibility', 'hidden');
+ }, 3000);

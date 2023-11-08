@@ -22,11 +22,20 @@ e.preventDefault();
 
           if (data.status) {
               sessionStorage.setItem('token', data.token);
-              alert('Login Confirmado');
+            //   alert('Login Confirmado');
               window.location.href = 'menu.html';
+              document.getElementById('resultado').innerHTML = '<p>Login Confirmado!</p>';
+              document.getElementById('resultado').style.visibility = 'visible';
           } else {
-              alert('Erro: ' + data.error);
-              document.getElementById("resultado").innerHTML="Login falhou!";
-              document.getElementById('id02').style.display='block';
+            //   alert('Erro: ' + data.error);
+            //   document.getElementById("resultado").innerHTML="Login falhou!";
+            //   document.getElementById('id02').style.display='block';
+            
+            document.getElementById('resultado').innerHTML = '<p>Login falhou!</p>';
+            document.getElementById('resultado').style.visibility = 'visible';
           }
+
+         setTimeout(function() {
+            $('#resultado').css('visibility', 'hidden');
+         }, 3000);
 });
