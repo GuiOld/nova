@@ -81,9 +81,21 @@ class UserController {
         
     }
 
-    public function login($senha,$lembrar,$email) {
+    public function validarToken($token){
         
-        $resultado = $this->db->select('users', ['email' => $email]);
+        $key = TOKEN;
+        $algoritimo = 'HS256';
+        try {
+            $decoded = JWT::decode($token, new Key($key, $algoritimo));
+            $permissoes = $decoded->telas;
+            return ['status' => true, 'message' => 'Token válido!', 'tela'=>$permissoes];
+        } catch(Exception $e) {
+            return ['status' => false, 'message' => 'Token inválido! Motivo: ' . $e->getMessage()];
+        }
+    }
+    public function login($senha,$lembrar) {
+        $condicoes = ['email' => $this->usuarios->getEmail()];
+        $resultado = $this->select($this->usuarios, $condicoes);
         $checado=$lembrar? 60*12 : 3;
         if (!$resultado) {
             return ['status' => false, 'message' => 'Usuário não encontrado.'];
@@ -91,30 +103,50 @@ class UserController {
         if (!password_verify($senha, $resultado[0]['senha'])) {
             return ['status' => false, 'message' => 'Senha incorreta.'];
         }
-        $key = "123";
+        $permissoes = $this->selectPermissoesPorPerfil($resultado[0]['perfilid']);
+        $key = TOKEN;
         $algoritimo='HS256';
             $payload = [
                 "iss" => "localhost",
                 "aud" => "localhost",
                 "iat" => time(),
                 "exp" => time() + (60 * $checado),  
-                "sub" => $email
+                "sub" => $this->usuarios->getEmail(),
+                'telas'=>$permissoes
             ];
             
             $jwt = JWT::encode($payload, $key,$algoritimo);
-           
-        return ['status' => true, 'message' => 'Login bem-sucedido!','token'=>$jwt];
+        return ['status' => true, 'message' => 'Login bem-sucedido!','token'=>$jwt,'telas'=>$permissoes];
+    }
+    public function adicionarUsuario(){
+        return $this->insert($this->usuarios);
+    }
+    
+    public function listarUsuarios(){
+        return $this->select($this->usuarios);
+    }
+    public function listarUsuariosDescriptografado(){
+        $resultado=$this->select($this->usuarios);
+        $retorno[]=[
+            'id' => $resultado[0]['id'],
+            'nome' => $resultado[0]['nome'],
+            'email' => $resultado[0]['email'],
+            'criado' => $resultado[0]['criado'],
+        ];
+             
+        return $retorno;
+    }
+    
+    public function buscarPorEmail(string $email){
+        $condicoes = ['email' => $email];
+        $resultados = $this->select($this->usuarios, $condicoes);
+        return count($resultados) > 0 ? $resultados[0] : null;
+    }
+    
+    public function removerUsuario(){
+        $condicoes = ['email' => $this->usuarios->getEmail()];
+        return $this->delete($this->usuarios, $condicoes);
     }
 
-    public function validarToken($token){
-        
-        $key = TOKEN;
-        $algoritimo = 'HS256';
-        try {
-            $decoded = JWT::decode($token, new Key($key, $algoritimo));
-            return ['status' => true, 'message' => 'Token válido!', 'data' => $decoded];
-        } catch(Exception $e) {
-            return ['status' => false, 'message' => 'Token inválido! Motivo: ' . $e->getMessage()];
-        }
-    }
+    
 }

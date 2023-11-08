@@ -6,6 +6,7 @@ class Usuario {
     private $email;
     private $senha;
     private $datanascimento;
+    private int $perfilid;
 
     public function __construct() {
       
@@ -44,6 +45,16 @@ class Usuario {
         return $this->senha;
     }    
 
+    public function getPerfilId(): int
+    {
+        return $this->perfilid;
+    }
+
+    public function setPerfilId(int $perfilid): void
+    {
+        $this->perfilid = $perfilid;
+    }
+    
     public function getType() {
         return 'User';
     }
