@@ -49,11 +49,14 @@ class UserController {
         $this->usuarios->setEmail($data['email']);
         $this->usuarios->setSenha($data['senha']);
         $this->usuarios->setDataNascimento($data['datanascimento']);
+        $this->usuarios->setPerfilId(1);
         if($this->db->insert('users', [
             'nome'=>$this->usuarios->getNome(),
             'email'=>$this->usuarios->getEmail(),
             'senha'=>$this->usuarios->getSenha(),
-            'datanascimento'=> $this->usuarios->getDataNascimento()])){
+            'datanascimento'=> $this->usuarios->getDataNascimento(),
+            'perfil_id'=> $this->usuarios->getPerfilId()
+            ])){
             $this->enderecos->setCep($data['cep']);
             $this->enderecos->setRua($data['rua']);
             $this->enderecos->setBairro($data['bairro']);
@@ -87,23 +90,26 @@ class UserController {
         $algoritimo = 'HS256';
         try {
             $decoded = JWT::decode($token, new Key($key, $algoritimo));
+            // var_dump($decoded);exit;
             $permissoes = $decoded->telas;
             return ['status' => true, 'message' => 'Token válido!', 'tela'=>$permissoes];
         } catch(Exception $e) {
             return ['status' => false, 'message' => 'Token inválido! Motivo: ' . $e->getMessage()];
         }
     }
-    public function login($senha,$lembrar) {
-        $condicoes = ['email' => $this->usuarios->getEmail()];
-        $resultado = $this->select($this->usuarios, $condicoes);
-        $checado=$lembrar? 60*12 : 3;
+    public function login($senha,$email) {
+        $condicoes = ['email' => $email];
+        $resultado = $this->db->select('users', $condicoes);
+        // var_dump($this->db->selectPermissoesPorPerfil(1));exit;
+        $checado=3;
         if (!$resultado) {
             return ['status' => false, 'message' => 'Usuário não encontrado.'];
         }
         if (!password_verify($senha, $resultado[0]['senha'])) {
             return ['status' => false, 'message' => 'Senha incorreta.'];
         }
-        $permissoes = $this->selectPermissoesPorPerfil($resultado[0]['perfilid']);
+        $permissoes = $this->db->selectPermissoesPorPerfil($resultado[0]['perfil_id']);
+        // var_dump($permissoes);exit;
         $key = TOKEN;
         $algoritimo='HS256';
             $payload = [

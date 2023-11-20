@@ -277,7 +277,10 @@ public function delete($table, $conditions) {
     }
 
     public function selectPermissoesPorPerfil($perfilId) {
-        $stmt = $this->conn->prepare("CALL GetPermissoesPorPerfil(:perfilId)");
+        $stmt = $this->conn->prepare("SELECT perm.nome 
+        FROM permissoes perm
+        JOIN perfil_permissoes pp ON perm.id = pp.permissao_id
+        WHERE pp.perfil_id = :perfilId");
         $stmt->bindValue(":perfilId", $perfilId, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

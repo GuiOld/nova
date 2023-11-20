@@ -24,28 +24,29 @@ switch($_SERVER["REQUEST_METHOD"]){
             $email = $body ['email'];
             
             $senha=$body['senha'];
+            // var_dump($body);exit;
             // $lembrar=$body['lembrar'];
             $usuariosController = new UserController();
-            $resultado = $usuariosController->login($senha,$lembrar, $email);
+            $resultado = $usuariosController->login($senha, $email);
 
             if(!$resultado['status']){
-                echo json_encode(['status' => $resultado['status'], 'message' => $resultado['message']]);
+                echo json_encode($resultado);
                exit;
             }
             
-            echo json_encode(['status' => $resultado['status'], 'message' => $resultado['message'], 'token'=>$resultado['token']]);
+            echo json_encode($resultado);
         }
         break;
         case "GET":
             $headers = getallheaders();
             $token = $headers['Authorization'] ?? null;
-            $usuariosController = new UserController($usuario);
+            $usuariosController = new UserController();
             $validationResponse = $usuariosController->validarToken($token);
             if ($token === null || !$validationResponse['status']) {
-                echo json_encode(['status' => false, 'message' => $validationResponse['message']]);
+                echo json_encode($validationResponse);
                 exit;
             }
-            echo json_encode(['status' => true, 'message' => 'Token válido']);
+            echo json_encode($validationResponse);
             exit;
             break; 
 }

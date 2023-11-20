@@ -8,7 +8,100 @@ CREATE TABLE users (
 	criado DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+create table users_log(
+	id INT PRIMARY KEY auto_increment,
+	id_log INT,
+	nome_log VARCHAR(100),
+    email_log VARCHAR(100),
+	senha_log VARCHAR(100),
+    perfil_id_log INT,
+	criado_log DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+update users set perfil_id = 2 where id = 16;
+
+select * from users;
+
+alter table users ADD CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`perfil_id`) REFERENCES `perfil` (`id`);
+
+alter table users ADD perfil_GetPermissoesPorPerfilid INT;
+
+ALTER TABLE users add FOREIGN KEY (perfil_id)  REFERENCES perfil(id);
+
+
+
 alter table users ADD datanascimento text;
+
+CREATE TABLE perfil (
+  id int NOT NULL AUTO_INCREMENT,
+  nome varchar(50) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY nome (nome)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+LOCK TABLES perfil WRITE;
+INSERT INTO perfil VALUES (2,'Y'),(1,'X');
+UNLOCK TABLES;
+
+CREATE TABLE `perfil_permissoes` (
+  `perfil_id` int NOT NULL,
+  `permissao_id` int NOT NULL,
+  PRIMARY KEY (`perfil_id`,`permissao_id`),
+  KEY `permissao_id` (`permissao_id`),
+  CONSTRAINT `perfil_permissoes_ibfk_1` FOREIGN KEY (`perfil_id`) REFERENCES `perfil` (`id`),
+  CONSTRAINT `perfil_permissoes_ibfk_2` FOREIGN KEY (`permissao_id`) REFERENCES `permissoes` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+LOCK TABLES `perfil_permissoes` WRITE;
+INSERT INTO `perfil_permissoes` VALUES (1,1),(1,2),(1,5),(1,10),
+(2,1),(2,2),(2,3),(2,4),(2,5),(2,6),(2,7),(2,8),(2,9),(2,10),(2,11);
+UNLOCK TABLES;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetPermissoesPorPerfil`(IN perfilId INT)
+BEGIN
+    SELECT perm.nome 
+    FROM permissoes perm
+    JOIN perfil_permissoes pp ON perm.id = pp.permissao_id
+    WHERE pp.perfil_id = perfilId;
+END ;;
+DELIMITER ;
+
+CREATE TABLE permissoes (
+  id int NOT NULL AUTO_INCREMENT,
+  nome varchar(100) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY nome (nome)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+LOCK TABLES permissoes WRITE;
+INSERT INTO permissoes VALUES (1,'menu'),(2,'buscaprod'),(3,'buscauser'),(4,'cadastro'),
+(5,'criarprod'),(6,'criaruser'),(7,'graficouser'),(8,'graficovenda'),(9,'itemvenda'),
+(10,'todosprod'),(11,'todosuser');
+UNLOCK TABLES;
+
+CREATE TABLE `usuario` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `senha` varchar(255) NOT NULL,
+  `perfil_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  KEY `perfil_id` (`perfil_id`),
+  CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`perfil_id`) REFERENCES `perfil` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+LOCK TABLES `usuario` WRITE;
+INSERT INTO `usuario` VALUES (1,'Y2N5cTBJT3liZGlENU4wcE1SMFcwQT09','aituK2pFZjAySEZtVytsZS8ycHJ6c2RUaVIreWg3U2xqcTJKUVd4cUk5QT0=','QWpxcHljYThveUxlaU42TzAvbm1ETzlZdTFXeG9Eck5zVHdXMUJURGpsQyt6R0RLemtQVTJETjhESEhPUjRtZVBUZ1VBcURVdlk4MXpmTWVVcjZGUHc9PQ==',1),(2,'U2FsUFZTVENmbUJVVjE3aFNBbnFvdz09','SFN4djFpMmxGRVByaVMwdjkwa1ZHYTNweGU1RUk4aEVReWFiaGRyNjkvbz0=','ZGVLT2NHM2NNQUxRc2FCY09TWWV4WkI2UTkzM2tOaTlxUEtLUjBvZHBRYXhCVjRnelh6alFtcW93aFNlM2gxaUFrRVVOVjFTQ203ZEJNNWNyMWR0U3c9PQ==',3);
+UNLOCK TABLES;
+
+
 
 CREATE VIEW idades AS 
 SELECT 

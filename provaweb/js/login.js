@@ -1,4 +1,4 @@
-document.getElementById("login").addEventListener('click', async function(e) {
+document.getElementById("login").addEventListener('click', function(e) {
 e.preventDefault();
 
   const email = document.getElementById('email').value;
@@ -7,18 +7,29 @@ e.preventDefault();
 
   const login = {
       email: email,
-      senha: senha,
+      senha: senha
   };
 
- const response = await fetch('../backend/Router/LoginRouter.php', {
+   fetch('backend/Router/LoginRouter.php', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
       },
       body: JSON.stringify(login)
   })
-      
-    const data = await response.json();
+    .then(response=> {
+      if (!response.ok) {
+        if (response.status === 401) {
+            throw new Error('Não autorizado');
+        } else {
+            throw new Error('Sem rede ou não conseguiu localizar o recurso');
+        }
+    }
+    return response.json();
+    })  
+
+    .then(data=> {
+      console.log(data);
 
           if (data.status) {
               sessionStorage.setItem('token', data.token);
@@ -38,4 +49,7 @@ e.preventDefault();
          setTimeout(function() {
             $('#resultado').css('visibility', 'hidden');
          }, 3000);
+    })
+
+    
 });

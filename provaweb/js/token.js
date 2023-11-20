@@ -1,14 +1,12 @@
-document.addEventListener("DOMContentLoaded", async function() {
-    const token = sessionStorage.getItem('token');
-
+const token = sessionStorage.getItem('token');
     if (!token) {
         redirecioneLogin();
-        return;
     }
 
   async function validaToken() {
+   
     try {
-        const response = await fetch('../backend/Router/LoginRouter.php', {
+        const response = await fetch('/backend/Router/LoginRouter.php', {
             method: 'GET',
             headers: {
                 'Authorization':  token
@@ -16,23 +14,46 @@ document.addEventListener("DOMContentLoaded", async function() {
         });
 
         const jsonResponse = await response.json();
+        console.log(jsonResponse);
+        const telasPermitidas = jsonResponse.tela.map(tela => tela.nome);
+        const nomePaginaAtual = window.location.pathname.split('/').pop().replace('.html', '');
+        const itensMenu = document.querySelectorAll('a.linkA');
+
+        itensMenu.forEach(item => {
+            const nomeTela = item.href.split('/').pop().replace('.html', ''); 
+            if (telasPermitidas.includes(nomeTela)) {
+                item.style.display = 'block'; 
+            } else {
+                item.style.display = 'none'; 
+            }
+        });
+
+        if (!telasPermitidas.includes(nomePaginaAtual)) {
+            if (telasPermitidas.length > 0) {  
+                window.location.href = telasPermitidas[0] + '.html';  
+            } else {
+                window.location.href = 'index.html';  
+            }
+        }
+
 
         if (!response.ok || !jsonResponse.status) {
             redirecioneLogin(jsonResponse.message);
         }
+        document.body.style.display = 'block';
+
     } catch (error) {
         console.error("Erro ao validar token:", error);
         redirecioneLogin(error);
     }
-}
+    }
 
-validaToken();
+    validaToken();
 
-setInterval(validaToken, 60000);
-});
+    setInterval(validaToken, 60000);
+
 
 function redirecioneLogin() {
-    document.getElementById("resultado").innerText="Token inválido ou expirado!"
-    document.getElementById('id02').style.display='block'
-    window.location.href = "login.html";
+
+    window.location.href = "index.html";
 }
