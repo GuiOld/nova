@@ -14,9 +14,18 @@ $body = json_decode(file_get_contents('php://input'), true);
 $id=isset($_GET['id'])?$_GET['id']:'';
 switch($_SERVER["REQUEST_METHOD"]){
     case "POST";
+    if(isset($body['atualizar'])){
+        $resultado = $produtos->update($body,intval($_GET['id']));
+        echo json_encode(['status'=>$resultado]);
+    }
+    if(isset($body['deletar'])){
+        $resultado = $produtos->delete(intval($_GET['id']));
+        echo json_encode(['status'=>$resultado]);
+    }
         $resultado = $produtos->insert($body);
         echo json_encode(['status'=>$resultado]);
     break;
+    
     case "GET";
         if(!isset($_GET['id'])){
             $resultado = $produtos->select();
@@ -27,12 +36,4 @@ switch($_SERVER["REQUEST_METHOD"]){
         }
        
     break;
-    case "PUT";
-        $resultado = $produtos->update($body,intval($_GET['id']));
-        echo json_encode(['status'=>$resultado]);
-    break;
-    case "DELETE";
-        $resultado = $produtos->delete(intval($_GET['id']));
-        echo json_encode(['status'=>$resultado]);
-    break;  
 }
