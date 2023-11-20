@@ -115,6 +115,29 @@ public function insert($table, $data) {
         return $stmt->execute();
 }
 
+// public function insert($object) {
+//     $reflectionClass = new \ReflectionClass($object);
+//     $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PRIVATE);
+//     $table=$reflectionClass->getShortName();
+//     $data = [];
+//     foreach ($properties as $property) {
+//         $property->setAccessible(true); 
+//         if ($property->getName() === 'id') { 
+//             continue;
+//         }
+//         $data[$property->getName()] = $property->getValue($object);
+       
+//     }
+//     $columns = implode(", ", array_keys($data));
+//     $placeholders = ":" . implode(", :", array_keys($data));
+//     $query = "INSERT INTO $table ($columns) VALUES ($placeholders)";
+//     $stmt = $this->conn->prepare($query);
+//     foreach ($data as $key => $value) {
+//         $stmt->bindValue(":$key", $value);
+//     }
+//     return $stmt->execute();
+// }
+
 // public function criarTabelaEndereco(){
 //     $sql = "
 //     CREATE TABLE IF NOT EXISTS endereco( 
@@ -152,6 +175,25 @@ public function select($table, $conditions = []) {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// public function select($object, $conditions = []) {
+        
+//     $reflectionClass = new \ReflectionClass($object);
+//     $table=$reflectionClass->getShortName();
+//     $query = "SELECT * FROM $table";
+//     if (!empty($conditions)) {
+//         $conditionsStr = implode(" AND ", array_map(function($item) {
+//         return "$item = :$item";
+//         }, array_keys($conditions)));
+//         $query .= " WHERE $conditionsStr";
+//     }
+//     $stmt = $this->conn->prepare($query);
+//     foreach ($conditions as $key => $value) {
+//         $stmt->bindValue(":$key", $value);
+//     }
+//     $stmt->execute();
+//     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+// }
+
 public function update($table, $data, $conditions) {
         $dataStr = implode(", ", array_map(function($item) {
             return "$item = :$item"; 
@@ -170,6 +212,35 @@ public function update($table, $data, $conditions) {
    return $stmt->execute();
 }
 
+// public function update($object, $conditions) {
+//     $reflectionClass = new \ReflectionClass($object);
+//     $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PRIVATE);
+//     $table = $reflectionClass->getShortName();
+//     $data = [];
+//     foreach ($properties as $property) {
+//         $property->setAccessible(true);
+//         if ($property->getName() === 'id') { 
+//             continue;
+//         }
+//         $data[$property->getName()] = $property->getValue($object);
+//     }
+//     $dataStr = implode(", ", array_map(function($item) {
+//         return "$item = :$item";
+//     }, array_keys($data)));
+//     $conditionsStr = implode(" AND ", array_map(function($item) {
+//         return "$item = :condition_$item";
+//     }, array_keys($conditions)));
+//     $query = "UPDATE $table SET $dataStr WHERE $conditionsStr";
+//     $stmt = $this->conn->prepare($query);
+//     foreach ($data as $key => $value) {
+//         $stmt->bindValue(":$key", $value);
+//     }
+//     foreach ($conditions as $key => $value) {
+//         $stmt->bindValue(":condition_$key", $value);
+//     }
+//     return $stmt->execute();
+// }
+
 public function delete($table, $conditions) {
         $conditionsStr = implode(" AND ", array_map(function($item) {
             return "$item = :$item"; 
@@ -181,6 +252,20 @@ public function delete($table, $conditions) {
         }
         return $stmt->execute();
     }
+
+// public function delete($object, $conditions) {
+//     $reflectionClass = new \ReflectionClass($object);
+//     $table = $reflectionClass->getShortName();
+//     $conditionsStr = implode(" AND ", array_map(function($item) {
+//         return "$item = :$item";
+//     }, array_keys($conditions)));
+//     $query = "DELETE FROM $table WHERE $conditionsStr";
+//     $stmt = $this->conn->prepare($query);
+//     foreach ($conditions as $key => $value) {
+//         $stmt->bindValue(":$key", $value);
+//     }
+//     return $stmt->execute();
+// }
     public function deleteWithCustomCondition($table, $condition) {
         $query = "DELETE FROM $table WHERE $condition";
         $stmt = $this->conn->prepare($query);
@@ -190,4 +275,79 @@ public function delete($table, $conditions) {
     public function isConnected() {
         return $this->is_connected;
     }
+
+    public function selectPermissoesPorPerfil($perfilId) {
+        $stmt = $this->conn->prepare("CALL GetPermissoesPorPerfil(:perfilId)");
+        $stmt->bindValue(":perfilId", $perfilId, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function listarTodosOsPerfis()
+{
+    $query = "SELECT id, nome FROM perfil";
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+public function cadPermissao($permissao)
+{
+    $query = "
+        INSERT INTO permissoes (nome) VALUES (:nome)
+    ";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(":nome", $permissao);
+    return $stmt->execute();
+}
+public function associar($perfilId, $permissaoId)
+{
+    $query = "
+        INSERT INTO perfil_permissoes (perfil_id, permissao_id) VALUES (:perfil_id, :permissao_id)
+    ";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(":perfil_id", $perfilId);
+    $stmt->bindParam(":permissao_id", $permissaoId);
+    return $stmt->execute();
+}
+public function listarTodasPermissoes()
+{
+    $query = "SELECT id, nome FROM permissoes";
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+public function desassociar($perfilId, $permissaoId)
+{
+    $query = "
+        DELETE FROM perfil_permissoes WHERE perfil_id = :perfil_id AND permissao_id = :permissao_id
+    ";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(":perfil_id", $perfilId);
+    $stmt->bindParam(":permissao_id", $permissaoId);
+    return $stmt->execute();
+}
+public function listarPermissao($permissao)
+{
+    $query = "
+    SELECT id FROM permissoes where nome=:permissao
+    ";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(":permissao", $permissao);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+public function listarPerfisPorPermissao($permissaoId)
+{
+    $query = "
+        SELECT perfil.id, perfil.nome 
+        FROM perfil_permissoes
+        JOIN perfil ON perfil.id = perfil_permissoes.perfil_id
+        WHERE perfil_permissoes.permissao_id = :permissao_id
+    ";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(":permissao_id", $permissaoId);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }
